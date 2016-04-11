@@ -61,6 +61,16 @@ try {
         
         $json['event_time']['start'] = $array['start_date'];
         $json['event_time']['end'] = $array['end_date'];
+        
+        if ($is_development == true) {
+            $json['server_time'] = $array['server_time'];
+            $json['update_time'] = $array['update_time'];
+            try {
+                $json['current_time'] = gmdate('Y-m-d H:i:s', (time() - strtotime($array['update_time'])) + strtotime($array['server_time']));
+            } catch (Exception $ex) {
+                $json['current_time'] = gmdate('Y-m-d H:i:s');
+            }
+        }
     }
     
 } catch (Exception $ex) {
