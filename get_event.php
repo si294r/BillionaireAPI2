@@ -15,12 +15,18 @@ $debug      = isset($params[2]) ? $params[2] : "";
 //$version = isset($_GET['version']) ? $_GET['version'] : "";
 //$debug = isset($_GET['debug']) ? $_GET['debug'] : "0";
 
-$config['username'] = 'billionaire';
-$config['password'] = '4legrium';
-$config['hostname'] = 'mongodb_server';
-$config['database'] = 'billionaire_prod';
-$config['database_dev'] = 'billionaire_dev';
-
+/* Example file content '/var/www/mongodb.php'
+ 
+    $config['username'] = '***********';
+    $config['password'] = '***********';
+    $config['hostname'] = 'api.alegrium.com';
+    $config['database'] = 'billionaire_prod';
+    $config['database_dev'] = 'billionaire_dev';
+    $config['options'] = array('ssl' => true);
+ 
+ */
+include '/var/www/mongodb.php';
+    
 $json['current_time'] = gmdate('Y-m-d H:i:s');
 $json['device'] = $device;
 $json['version'] = $version;
@@ -41,7 +47,7 @@ try {
             . $config['hostname'] . "/"
             . $database;
 
-    $client = new MongoDB\Client($connection_string); // create object client 
+    $client = new MongoDB\Client($connection_string, $config['options']); // create object client 
     $db = $client->$database; // select database
 
     $document = $db->event->findOne(['device' => $device, 'version' => $version, 'status' => 'Active']);
