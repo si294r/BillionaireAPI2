@@ -64,8 +64,8 @@ try {
                     $array[$k] = $v;
                 }
             }
-            apcu_store($key, $array, 180);
         }
+        apcu_store($key, $array, 180);
     }
 
     if (is_array($array)) {
