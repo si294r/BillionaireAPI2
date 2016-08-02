@@ -6,6 +6,7 @@ require 'mongodb_helper.php';
 
 $facebookID = isset($params[1]) ? $params[1] : "";
 $limit = isset($params[2]) ? $params[2] : 50;
+$overwrite_cache = isset($params[3]) ? $params[3] : 0;
 
 if (trim($facebookID) == "") {
     return array(
@@ -30,7 +31,7 @@ $result['currentUser'] = bson_document_to_array($document, $fields);
 
 $key = "BillionaireAPI/leaderboard.php?globalboard";
 $array_cache = apcu_fetch($key);
-if ($array_cache === FALSE) {
+if ($array_cache === FALSE || $overwrite_cache == 1) {
     $filter = array();
     $sort = array('netWorth_pow' => -1, 'netWorth_2' => -1, 'facebookID' => -1); // desc(-1), asc(1)
     $options = array('sort' => $sort, 'limit' => (int) $limit);
