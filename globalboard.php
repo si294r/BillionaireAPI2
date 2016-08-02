@@ -6,7 +6,7 @@ require 'mongodb_helper.php';
 
 $facebookID = isset($params[1]) ? $params[1] : "";
 $limit = isset($params[2]) ? $params[2] : 50;
-        
+
 if (trim($facebookID) == "") {
     return array(
         "code" => 141,
@@ -17,23 +17,29 @@ if (trim($facebookID) == "") {
 $db = get_mongodb(IS_DEVELOPMENT);
 $collection = $db->selectCollection("_User");
 
-$document = $collection->findOne([ 'facebookID' => $facebookID ]);
+$document = $collection->findOne([ 'facebookID' => $facebookID]);
 
 if (!is_object($document)) {
     return array("code" => 141, "error" => "User not found");
 }
 
-$filter = array();
-$sort = array('netWorth_pow' => -1, 'netWorth_2' => -1, 'facebookID' => -1); // desc(-1), asc(1)
-$options = array('sort' => $sort, 'limit' => (int) $limit);
-
-$documents = $collection->find($filter, $options);
-
-$fields = ['facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName'];
-        
 $result['status'] = TRUE;
 $result['currentUser'] = bson_document_to_array($document, $fields);
-$result['topPlayer'] = bson_documents_to_array($documents, $fields);
+
+$key = "BillionaireAPI/leaderboard.php?globalboard";
+$array_cache = apcu_fetch($key);
+if ($array_cache === FALSE) {
+    $filter = array();
+    $sort = array('netWorth_pow' => -1, 'netWorth_2' => -1, 'facebookID' => -1); // desc(-1), asc(1)
+    $options = array('sort' => $sort, 'limit' => (int) $limit);
+
+    $documents = $collection->find($filter, $options);
+
+    $fields = ['facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName'];
+
+    $array_cache = bson_documents_to_array($documents, $fields);
+}
+$result['topPlayer'] = $array_cache;
 
 //$score = isset($document->score) ? $document->score : 0;
 $count1 = 0; //$collection->count(array('score' => array('$gt' => $score)));
@@ -41,7 +47,7 @@ $count2 = 0; //$collection->count(array('score' => array('$eq' => $score), 'face
 
 $i = 1;
 $facebook_ids = array($facebookID);
-foreach ($result['topPlayer'] as $k=>$v) {
+foreach ($result['topPlayer'] as $k => $v) {
 //    $result['topPlayer'][$k]['name'] = 'Player '.$i;
     if (trim($v['facebookID']) != "") {
         $facebook_ids[] = $v['facebookID'];
@@ -57,7 +63,7 @@ $json_facebook = json_decode($result_facebook);
 $result['currentUser']['name'] = isset($json_facebook->$facebookID->name) ? $json_facebook->$facebookID->name : "N/A";
 $result['currentUser']['rank'] = $count1 + $count2;
 
-foreach ($result['topPlayer'] as $k=>$v) {
+foreach ($result['topPlayer'] as $k => $v) {
     if (trim($v['facebookID']) != "" && isset($json_facebook->$v['facebookID']->name)) {
         $result['topPlayer'][$k]['name'] = $json_facebook->$v['facebookID']->name;
     } else {
