@@ -30,6 +30,8 @@ $options = array('sort' => $sort, 'limit' => (int) $limit);
 
 $documents = $collection->find($filter, $options);
 
+print_r($document);
+
 $result['status'] = TRUE;
 $result['currentUser'] = bson_document_to_array($document);
 $result['topPlayer'] = bson_documents_to_array($documents);
