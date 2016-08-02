@@ -17,8 +17,7 @@ if (trim($facebookID) == "") {
 $db = get_mongodb(IS_DEVELOPMENT);
 $collection = $db->selectCollection("_User");
 
-$document = $collection->findOne([ 'facebookID' => $facebookID ], 
-        ['facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName']);
+$document = $collection->findOne([ 'facebookID' => $facebookID ]);
 
 if (!is_object($document)) {
     return array("code" => 141, "error" => "User not found");
@@ -30,9 +29,11 @@ $options = array('sort' => $sort, 'limit' => (int) $limit);
 
 $documents = $collection->find($filter, $options);
 
+$fields = ['facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName'];
+        
 $result['status'] = TRUE;
-$result['currentUser'] = bson_document_to_array($document);
-$result['topPlayer'] = bson_documents_to_array($documents);
+$result['currentUser'] = bson_document_to_array($document, $fields);
+$result['topPlayer'] = bson_documents_to_array($documents, $fields);
 
 //$score = isset($document->score) ? $document->score : 0;
 $count1 = 0; //$collection->count(array('score' => array('$gt' => $score)));
