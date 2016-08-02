@@ -23,6 +23,8 @@ if (!is_object($document)) {
     return array("code" => 141, "error" => "User not found");
 }
 
+$fields = ['facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName'];
+
 $result['status'] = TRUE;
 $result['currentUser'] = bson_document_to_array($document, $fields);
 
@@ -34,8 +36,6 @@ if ($array_cache === FALSE) {
     $options = array('sort' => $sort, 'limit' => (int) $limit);
 
     $documents = $collection->find($filter, $options);
-
-    $fields = ['facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName'];
 
     $array_cache = bson_documents_to_array($documents, $fields);
     apcu_store($key, $array_cache, 180);
