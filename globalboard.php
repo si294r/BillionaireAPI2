@@ -39,7 +39,7 @@ if ($array_cache === FALSE || $overwrite_cache == 1) {
     $documents = $collection->find($filter, $options);
 
     $array_cache = bson_documents_to_array($documents, $fields);
-    apcu_store($key, $array_cache, 180);
+    apcu_store($key, $array_cache, 240);
 }
 $result['topPlayer'] = $array_cache;
 
