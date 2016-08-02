@@ -35,6 +35,7 @@ function bson_document_to_array($document) {
 
     if (is_object($document)) {
         foreach ($document as $k => $v) {
+            var_dump($v);
             if (is_object($v)) {
                 $array[$k] = (string) $v;
             } else {

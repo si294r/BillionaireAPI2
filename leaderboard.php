@@ -22,6 +22,8 @@ $params = explode("/", $query_string);
 
 $service = isset($params[0]) ? $params[0] : "";
 
+header('Content-Type: application/json');
+
 switch ($service) {
     case 'globalboard' :
     case 'localboard' :
@@ -42,7 +44,5 @@ $end_time = microtime(true);
 
 $service_result['execution_time'] = number_format($end_time - $start_time, 5);
 $service_result['memory_usage'] = memory_get_usage(true);
-
-header('Content-Type: application/json');
 
 echo json_encode($service_result);
