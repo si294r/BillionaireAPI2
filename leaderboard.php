@@ -13,7 +13,7 @@ function show_error($response_code, $status_code, $message) {
 }
 
 $headers = getallheaders();
-if (!isset($headers['Billionaire-Token']) || $headers['Billionaire-Token'] != JELLY_POP_TOKEN) {
+if (!isset($headers['Billionaire-Token']) || $headers['Billionaire-Token'] != BILLIONAIRE_TOKEN) {
     show_error(401, "401 Unauthorized", "Invalid Billionaire Token");
 }
 
