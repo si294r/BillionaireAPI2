@@ -18,7 +18,7 @@ $db = get_mongodb(IS_DEVELOPMENT);
 $collection = $db->selectCollection("_User");
 
 $document = $collection->findOne([ 'facebookID' => $facebookID ], 
-        ['facebookID' => 1, 'netWorth' => 1, 'netWorth_2' => 1, 'netWorth_pow' => 1, 'displayName' => 1]);
+        ['facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName']);
 
 if (!is_object($document)) {
     return array("code" => 141, "error" => "User not found");
@@ -29,8 +29,6 @@ $sort = array('netWorth_pow' => -1, 'netWorth_2' => -1, 'facebookID' => -1); // 
 $options = array('sort' => $sort, 'limit' => (int) $limit);
 
 $documents = $collection->find($filter, $options);
-
-print_r($document);
 
 $result['status'] = TRUE;
 $result['currentUser'] = bson_document_to_array($document);
