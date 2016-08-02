@@ -29,7 +29,7 @@ $fields = ['facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName'
 $result['status'] = TRUE;
 $result['currentUser'] = bson_document_to_array($document, $fields);
 
-$key = "BillionaireAPI/leaderboard.php?globalboard";
+$key = "BillionaireAPI/leaderboard.php?localboard/".$countryCode;
 $array_cache = apcu_fetch($key);
 if ($array_cache === FALSE) {
     $filter = array('countryCode' => array('$eq' => $countryCode));
