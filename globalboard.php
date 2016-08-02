@@ -17,7 +17,7 @@ if (trim($facebookID) == "") {
 $db = get_mongodb(IS_DEVELOPMENT);
 $collection = $db->selectCollection("_User");
 
-$document = $collection->findOne([ 'facebookID' => $facebookID ]);
+$document = $collection->findOne([ 'facebookID' => $facebookID ], array('facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName'));
 
 if (!is_object($document)) {
     return array("code" => 141, "error" => "User not found");
@@ -56,7 +56,7 @@ $result['currentUser']['name'] = isset($json_facebook->$facebookID->name) ? $jso
 $result['currentUser']['rank'] = $count1 + $count2;
 
 foreach ($result['topPlayer'] as $k=>$v) {
-    if (trim($v['facebook_id']) != "" && isset($json_facebook->$v['facebookID']->name)) {
+    if (trim($v['facebookID']) != "" && isset($json_facebook->$v['facebookID']->name)) {
         $result['topPlayer'][$k]['name'] = $json_facebook->$v['facebookID']->name;
     } else {
         $result['topPlayer'][$k]['name'] = "N/A";
