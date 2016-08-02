@@ -18,7 +18,7 @@ $db = get_mongodb(IS_DEVELOPMENT);
 $collection = $db->selectCollection("_User");
 
 $document = $collection->findOne([ 'facebookID' => $facebookID ], 
-        array('facebookID' => true, 'netWorth' => true, 'netWorth_2' => true, 'netWorth_pow' => true, 'displayName' => true));
+        ['facebookID' => true, 'netWorth' => false, 'netWorth_2' => false, 'netWorth_pow' => true, 'displayName' => true]);
 
 if (!is_object($document)) {
     return array("code" => 141, "error" => "User not found");
