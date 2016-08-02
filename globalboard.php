@@ -38,6 +38,7 @@ if ($array_cache === FALSE) {
     $fields = ['facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName'];
 
     $array_cache = bson_documents_to_array($documents, $fields);
+    apcu_store($key, $array_cache, 180);
 }
 $result['topPlayer'] = $array_cache;
 
