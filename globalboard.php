@@ -42,9 +42,14 @@ if ($array_cache === FALSE) {
 }
 $result['topPlayer'] = $array_cache;
 
-//$score = isset($document->score) ? $document->score : 0;
-$count1 = 0; //$collection->count(array('score' => array('$gt' => $score)));
-$count2 = 0; //$collection->count(array('score' => array('$eq' => $score), 'facebook_id' => array('$gte' => $facebook_id)));
+$netWorth_pow = isset($document->netWorth_pow) ? $document->netWorth_pow : 0;
+$netWorth_2 = isset($document->netWorth_2) ? $document->netWorth_2 : 0;
+$count1 = $collection->count(array('netWorth_pow' => array('$gt' => $netWorth_pow)));
+$count2 = $collection->count(array('netWorth_pow' => array('$eq' => $netWorth_pow), 
+                                    'netWorth_2' => array('$gt' => $netWorth_2)));
+$count3 = $collection->count(array('netWorth_pow' => array('$eq' => $netWorth_pow), 
+                                    'netWorth_2' => array('$eq' => $netWorth_2),
+                                    'facebookID' => array('$gte' => $facebookID)));
 
 $i = 1;
 $facebook_ids = array($facebookID);
@@ -62,7 +67,7 @@ $result_facebook = file_get_contents($url);
 $json_facebook = json_decode($result_facebook);
 
 $result['currentUser']['name'] = isset($json_facebook->$facebookID->name) ? $json_facebook->$facebookID->name : "N/A";
-$result['currentUser']['rank'] = $count1 + $count2;
+$result['currentUser']['rank'] = $count1 + $count2 + $count3;
 
 foreach ($result['topPlayer'] as $k => $v) {
     if (trim($v['facebookID']) != "" && isset($json_facebook->$v['facebookID']->name)) {
