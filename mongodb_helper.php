@@ -35,9 +35,9 @@ function bson_document_to_array($document) {
 
     if (is_object($document)) {
         foreach ($document as $k => $v) {
-            if (is_object($v)) {
-                echo get_class($v);
-                var_dump($v);
+            if (is_object($v) && "MongoDB\Model\BSONDocument" == get_class($v)) {
+                $array[$k] = bson_document_to_array($v);
+            } elseif (is_object($v)) {
                 $array[$k] = (string) $v;
             } else {
                 $array[$k] = $v;
