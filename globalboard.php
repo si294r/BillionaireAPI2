@@ -77,6 +77,4 @@ foreach ($result['topPlayer'] as $k => $v) {
     }
 }
 
-//echo json_encode($result);
-
 return $result;
