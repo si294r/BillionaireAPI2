@@ -5,6 +5,7 @@ defined('IS_DEVELOPMENT') OR exit('No direct script access allowed');
 require 'mongodb_helper.php';
 
 $facebookID = isset($params[1]) ? $params[1] : "";
+
 $limit = isset($params[2]) ? $params[2] : 50;
 $overwrite_top_player_cache = isset($params[3]) ? $params[3] : 0;
 
@@ -48,10 +49,13 @@ $result['topPlayer'] = $array_cache;
 if ($overwrite_top_player_cache == 0) {
     $netWorth_pow = isset($document->netWorth_pow) ? $document->netWorth_pow : 0;
     $netWorth_2 = isset($document->netWorth_2) ? $document->netWorth_2 : 0;
-    $count1 = $collection->count(array('netWorth_pow' => array('$gt' => $netWorth_pow)));
-    $count2 = $collection->count(array('netWorth_pow' => array('$eq' => $netWorth_pow),
+    $count1 = $collection->count(array(
+        'netWorth_pow' => array('$gt' => $netWorth_pow)));
+    $count2 = $collection->count(array(
+        'netWorth_pow' => array('$eq' => $netWorth_pow),
         'netWorth_2' => array('$gt' => $netWorth_2)));
-    $count3 = $collection->count(array('netWorth_pow' => array('$eq' => $netWorth_pow),
+    $count3 = $collection->count(array(
+        'netWorth_pow' => array('$eq' => $netWorth_pow),
         'netWorth_2' => array('$eq' => $netWorth_2),
         'facebookID' => array('$gte' => $facebookID)));
 
@@ -65,7 +69,6 @@ if ($overwrite_top_player_cache == 0) {
 if ($update_top_player_cache == 1) {
     $i = 1;
     foreach ($result['topPlayer'] as $k => $v) {
-//    $result['topPlayer'][$k]['name'] = 'Player '.$i;
         if (trim($v['facebookID']) != "") {
             $facebook_ids[] = $v['facebookID'];
         }
