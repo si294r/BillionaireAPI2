@@ -19,7 +19,7 @@ if (trim($facebookID) == "" && $overwrite_top_player_cache == 0) {
 $db = get_mongodb(IS_DEVELOPMENT);
 $collection = $db->selectCollection("_User");
 
-$fields = ['facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName'];
+$fields = ['_id', 'facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName'];
 
 if ($overwrite_top_player_cache == 0) {
     $document = $collection->findOne([ 'facebookID' => $facebookID]);
@@ -76,7 +76,9 @@ if ($overwrite_top_player_cache == 0) {
 if ($update_top_player_cache == 1) {
     $i = 1;
     foreach ($result['topPlayer'] as $k => $v) {
-        if (trim($v['facebookID']) != "") {
+        if (!isset($v['facebookID'])) {
+            $result['topPlayer'][$k]['facebookID'] = "0"; 
+        } elseif (trim($v['facebookID']) != "") {
             $facebook_ids[] = $v['facebookID'];
         }
         $result['topPlayer'][$k]['rank'] = $i;
