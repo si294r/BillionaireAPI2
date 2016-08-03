@@ -27,6 +27,7 @@ header('Content-Type: application/json');
 switch ($service) {
     case 'globalboard' :
     case 'localboard' :
+    case 'friendboard' :
         if ($_SERVER["REQUEST_METHOD"] != 'GET') {
             show_error(405, "405 Method Not Allowed", "Invalid Method");
         }
