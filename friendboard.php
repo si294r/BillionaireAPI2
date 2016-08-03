@@ -19,9 +19,7 @@ $collection = $db->selectCollection("_User");
 
 $fields = ['_id', 'facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName'];
 
-echo "microtime: ".date("Y-m-d H:i:s.u")."\r\n";
 $document = $collection->findOne([ 'facebookID' => $facebookID]);
-echo "microtime: ".date("Y-m-d H:i:s.u")."\r\n";
 
 if (!is_object($document)) {
     return array("code" => 141, "error" => "User not found");
@@ -34,9 +32,7 @@ $filter_friends = array($facebookID);
 $url = "https://graph.facebook.com/v2.7/$facebookID/friends?access_token={$config['facebook_token']}&limit=50";
 
 get_facebook_friends:
-echo "microtime: ".date("Y-m-d H:i:s.u")."\r\n";
 $result_facebook = file_get_contents($url);
-echo "microtime: ".date("Y-m-d H:i:s.u")."\r\n";
 $json_facebook = json_decode($result_facebook);
 
 foreach ($json_facebook->data as $v) {
@@ -53,23 +49,19 @@ $filter = array('facebookID' => array('$in' => $filter_friends), 'netWorth_2' =>
 $sort = array('netWorth_pow' => -1, 'netWorth_2' => -1, 'facebookID' => -1); // desc(-1), asc(1)
 $options = array('sort' => $sort, 'limit' => (int) $limit);
 
-echo "microtime: ".date("Y-m-d H:i:s.u")."\r\n";
 $documents = $collection->find($filter, $options);
-echo "microtime: ".date("Y-m-d H:i:s.u")."\r\n";
 
 $result['topPlayer'] = bson_documents_to_array($documents, $fields);
 
 $url2 = "https://graph.facebook.com/?ids=" . $facebookID . "&access_token=" . $config['facebook_token'];
-echo "microtime: ".date("Y-m-d H:i:s.u")."\r\n";
 $result_facebook2 = file_get_contents($url2);
-echo "microtime: ".date("Y-m-d H:i:s.u")."\r\n";
 $json_facebook2 = json_decode($result_facebook2);
 
 $friends[$facebookID] = $json_facebook2->$facebookID->name;
 
 $result['currentUser']['name'] = $json_facebook2->$facebookID->name;
 $result['currentUser']['rank'] = 0;
-$result['filter_friends'] = $filter_friends;
+//$result['filter_friends'] = $filter_friends;
 
 $i = 1;
 foreach ($result['topPlayer'] as $k=>$v) {
