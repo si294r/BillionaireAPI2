@@ -35,7 +35,7 @@ $update_top_player_cache = 0;
 $key = "BillionaireAPI/leaderboard.php?globalboard";
 $array_cache = apcu_fetch($key);
 if ($array_cache === FALSE || $overwrite_top_player_cache == 1) {
-    $filter = array('facebookID' => array('$exists' => true));
+    $filter = array();
     $sort = array('netWorth_pow' => -1, 'netWorth_2' => -1, 'facebookID' => -1); // desc(-1), asc(1)
     $options = array('sort' => $sort, 'limit' => (int) $limit);
 
@@ -49,18 +49,22 @@ $result['topPlayer'] = $array_cache;
 if ($overwrite_top_player_cache == 0) {
     $netWorth_pow = isset($document->netWorth_pow) ? $document->netWorth_pow : 0;
     $netWorth_2 = isset($document->netWorth_2) ? $document->netWorth_2 : 0;
-    $count1 = $collection->count(array('facebookID' => array('$exists' => true),
+    $count1 = $collection->count(array(//'facebookID' => array('$exists' => true),
         
         'netWorth_pow' => array('$gt' => $netWorth_pow)));
-    $count2 = $collection->count(array('facebookID' => array('$exists' => true),
+    $count2 = $collection->count(array(//'facebookID' => array('$exists' => true),
         
         'netWorth_pow' => array('$eq' => $netWorth_pow),
         'netWorth_2' => array('$gt' => $netWorth_2)));
-    $count3 = $collection->count(array('facebookID' => array('$exists' => true),
+    $count3 = $collection->count(array( '$and' =>
+            array(
+                //array('facebookID' => array('$exists' => true)),
         
-        'netWorth_pow' => array('$eq' => $netWorth_pow),
-        'netWorth_2' => array('$eq' => $netWorth_2),
-        'facebookID' => array('$gte' => $facebookID)));
+                array('netWorth_pow' => array('$eq' => $netWorth_pow)),
+                array('netWorth_2' => array('$eq' => $netWorth_2)),
+                array('facebookID' => array('$gte' => $facebookID))
+                )
+            ));
 
     $facebook_ids = array($facebookID);
 } else {
