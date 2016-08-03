@@ -54,10 +54,10 @@ $sort = array('netWorth_pow' => -1, 'netWorth_2' => -1, 'facebookID' => -1); // 
 $options = array('sort' => $sort, 'limit' => (int) $limit);
 
 echo "microtime: ".microtime()."\r\n";
-$documents = $collection->find($filter, $options);
+//$documents = $collection->find($filter, $options);
 echo "microtime: ".microtime()."\r\n";
 
-$result['topPlayer'] = bson_documents_to_array($documents, $fields);
+//$result['topPlayer'] = bson_documents_to_array($documents, $fields);
 
 $url2 = "https://graph.facebook.com/?ids=" . $facebookID . "&access_token=" . $config['facebook_token'];
 echo "microtime: ".microtime()."\r\n";
