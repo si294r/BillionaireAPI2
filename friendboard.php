@@ -49,7 +49,7 @@ $filter = array('netWorth_2' => array('$gt' => 0), 'facebookID' => array('$in' =
 $sort = array('netWorth_pow' => -1, 'netWorth_2' => -1, 'facebookID' => -1); // desc(-1), asc(1)
 $options = array('sort' => $sort, 'limit' => (int) $limit);
 
-$documents = $db->User->find($filter, $options);
+$documents = $collection->find($filter, $options);
 
 $result['topPlayer'] = bson_documents_to_array($documents, $fields);
 
