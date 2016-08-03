@@ -56,11 +56,15 @@ if ($overwrite_top_player_cache == 0) {
         'countryCode' => array('$eq' => $countryCode),
         'netWorth_pow' => array('$eq' => $netWorth_pow),
         'netWorth_2' => array('$gt' => $netWorth_2)));
-    $count3 = $collection->count(array('facebookID' => array('$exists' => true), 
-        'countryCode' => array('$eq' => $countryCode),
-        'netWorth_pow' => array('$eq' => $netWorth_pow),
-        'netWorth_2' => array('$eq' => $netWorth_2),
-        'facebookID' => array('$gte' => $facebookID)));
+    $count3 = $collection->count(array( '$and' =>
+            array(
+                array('facebookID' => array('$exists' => true)), 
+                array('countryCode' => array('$eq' => $countryCode)),
+                array('netWorth_pow' => array('$eq' => $netWorth_pow)),
+                array('netWorth_2' => array('$eq' => $netWorth_2)),
+                array('facebookID' => array('$gte' => $facebookID))
+                )
+            ));
 
     $facebook_ids = array($facebookID);
 } else {
