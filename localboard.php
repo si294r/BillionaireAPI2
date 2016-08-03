@@ -35,7 +35,7 @@ $update_top_player_cache = 0;
 $key = "BillionaireAPI/leaderboard.php?localboard/" . $countryCode;
 $array_cache = apcu_fetch($key);
 if ($array_cache === FALSE || $overwrite_top_player_cache == 1) {
-    $filter = array('countryCode' => array('$eq' => $countryCode));
+    $filter = array('facebookID' => array('$exists' => true), 'countryCode' => array('$eq' => $countryCode));
     $sort = array('netWorth_pow' => -1, 'netWorth_2' => -1, 'facebookID' => -1); // desc(-1), asc(1)
     $options = array('sort' => $sort, 'limit' => (int) $limit);
 
