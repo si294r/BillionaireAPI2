@@ -51,7 +51,7 @@ $options = array('sort' => $sort, 'limit' => (int) $limit);
 
 $documents = $collection->find($filter, $options);
 
-$result['topPlayer'] = bson_documents_to_array($documents, $fields);
+//$result['topPlayer'] = bson_documents_to_array($documents, $fields);
 
 $url2 = "https://graph.facebook.com/?ids=" . $facebookID . "&access_token=" . $config['facebook_token'];
 $result_facebook2 = file_get_contents($url2);
