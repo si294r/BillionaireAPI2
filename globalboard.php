@@ -53,12 +53,15 @@ if ($overwrite_cache == 0) {
     $count3 = $collection->count(array('netWorth_pow' => array('$eq' => $netWorth_pow),
         'netWorth_2' => array('$eq' => $netWorth_2),
         'facebookID' => array('$gte' => $facebookID)));
+
+    $facebook_ids = array($facebookID);
 } else {
     $count1 = $count2 = $count3 = 0;
+
+    $facebook_ids = array();
 }
 
 $i = 1;
-$facebook_ids = array($facebookID);
 foreach ($result['topPlayer'] as $k => $v) {
 //    $result['topPlayer'][$k]['name'] = 'Player '.$i;
     if (trim($v['facebookID']) != "") {
@@ -72,8 +75,10 @@ $url = "https://graph.facebook.com/?ids=" . implode(",", $facebook_ids) . "&acce
 $result_facebook = file_get_contents($url);
 $json_facebook = json_decode($result_facebook);
 
-$result['currentUser']['name'] = isset($json_facebook->$facebookID->name) ? $json_facebook->$facebookID->name : "N/A";
-$result['currentUser']['rank'] = $count1 + $count2 + $count3;
+if ($overwrite_cache == 0) {
+    $result['currentUser']['name'] = isset($json_facebook->$facebookID->name) ? $json_facebook->$facebookID->name : "N/A";
+    $result['currentUser']['rank'] = $count1 + $count2 + $count3;
+}
 
 foreach ($result['topPlayer'] as $k => $v) {
     if (trim($v['facebookID']) != "" && isset($json_facebook->$v['facebookID']->name)) {
