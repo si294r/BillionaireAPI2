@@ -19,7 +19,9 @@ $collection = $db->selectCollection("_User");
 
 $fields = ['_id', 'facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName'];
 
+echo "microtime: ".microtime()."\r\n";
 $document = $collection->findOne([ 'facebookID' => $facebookID]);
+echo "microtime: ".microtime()."\r\n";
 
 if (!is_object($document)) {
     return array("code" => 141, "error" => "User not found");
@@ -32,7 +34,9 @@ $filter_friends = array($facebookID);
 $url = "https://graph.facebook.com/v2.7/$facebookID/friends?access_token={$config['facebook_token']}&limit=50";
 
 get_facebook_friends:
+echo "microtime: ".microtime()."\r\n";
 $result_facebook = file_get_contents($url);
+echo "microtime: ".microtime()."\r\n";
 $json_facebook = json_decode($result_facebook);
 
 foreach ($json_facebook->data as $v) {
@@ -54,7 +58,9 @@ $documents = $collection->find($filter, $options);
 //$result['topPlayer'] = bson_documents_to_array($documents, $fields);
 
 $url2 = "https://graph.facebook.com/?ids=" . $facebookID . "&access_token=" . $config['facebook_token'];
+echo "microtime: ".microtime()."\r\n";
 $result_facebook2 = file_get_contents($url2);
+echo "microtime: ".microtime()."\r\n";
 $json_facebook2 = json_decode($result_facebook2);
 
 $friends[$facebookID] = $json_facebook2->$facebookID->name;
