@@ -7,7 +7,7 @@ require '/var/www/mongodb_billionaire.php';
 
 
 // get mongodb object database
-function get_mongodb($is_development = false) {
+function get_mongodb($is_development = false, $use_balancer = true) {
 
     global $config;
 
@@ -23,12 +23,13 @@ function get_mongodb($is_development = false) {
     apcu_store("BillionaireAPI_Balancer_DB", $balancer);
     
     $database = $is_development == true ? $config['database_dev'] : $config['database'];
-
+    $hostname = $use_balancer == true ? $config['hostname_balancer'][$balancer - 1] : $config['hostname'];
+            
     $connection_string = "mongodb://"
             . $config['username'] . ":"
             . $config['password'] . "@"
 //            . $config['hostname'] . "/"
-            . $config['hostname_balancer'][$balancer - 1] . "/"
+            . $hostname . "/"
             . $database;
 
     $client = new MongoDB\Client($connection_string, $config['options']); // create object client 

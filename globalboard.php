@@ -16,7 +16,7 @@ if (trim($facebookID) == "" && $overwrite_top_player_cache == 0) {
     );
 }
 
-$db = get_mongodb(IS_DEVELOPMENT);
+$db = get_mongodb(IS_DEVELOPMENT, $overwrite_top_player_cache == 0);
 $collection = $db->selectCollection("_User");
 
 $fields = ['_id', 'facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName'];
