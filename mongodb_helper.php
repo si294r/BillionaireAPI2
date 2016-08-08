@@ -11,12 +11,24 @@ function get_mongodb($is_development = false) {
 
     global $config;
 
+    $value = apcu_fetch("BillionaireAPI_Balancer_DB");
+    if ($value === FALSE) {
+        $balancer = 1;
+    } else {
+        $balancer = $value + 1;
+        if ($balancer > count($config['hostname_balancer'])) {
+            $balancer = 1;
+        }
+    }
+    apcu_store("BillionaireAPI_Balancer_DB", $balancer);
+    
     $database = $is_development == true ? $config['database_dev'] : $config['database'];
 
     $connection_string = "mongodb://"
             . $config['username'] . ":"
             . $config['password'] . "@"
-            . $config['hostname'] . "/"
+//            . $config['hostname'] . "/"
+            . $config['hostname_balancer'][$balancer - 1] . "/"
             . $database;
 
     $client = new MongoDB\Client($connection_string, $config['options']); // create object client 
