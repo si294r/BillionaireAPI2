@@ -12,7 +12,11 @@ function show_error($response_code, $status_code, $message) {
     die;
 }
 
-$headers = getallheaders();
+if (function_exists("getallheaders")) {
+    $headers = getallheaders();
+} else {
+    $headers['Billionaire-Token'] = $_SERVER["HTTP_BILLIONAIRE_TOKEN"];
+}
 if (!isset($headers['Billionaire-Token']) || $headers['Billionaire-Token'] != BILLIONAIRE_TOKEN) {
     show_error(401, "401 Unauthorized", "Invalid Billionaire Token");
 }
