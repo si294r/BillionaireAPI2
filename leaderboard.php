@@ -8,7 +8,7 @@ define('BILLIONAIRE_TOKEN', '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 function show_error($response_code, $status_code, $message) {
     http_response_code($response_code);
     header('Content-Type: application/json');
-    echo json_encode(array('status_code' => $status_code, 'message' => $message));
+    echo json_encode(array('status_code' => $status_code, 'message' => $message, 'server' => $_SERVER["REMOTE_ADDR"]));
     die;
 }
 
