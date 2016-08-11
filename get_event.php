@@ -93,5 +93,7 @@ $end_time = microtime(true);
 $json['execute_time'] = number_format($end_time - $start_time, 5);
 $json['memory_usage'] = memory_get_usage(true);
 
+header('Content-Type: application/json');
+
 echo json_encode($json);
 
