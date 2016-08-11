@@ -12,12 +12,14 @@ function show_error($response_code, $status_code, $message) {
     die;
 }
 
+$pass_token = isset($_SERVER["REMOTE_ADDR"]) && $_SERVER["REMOTE_ADDR"] == '127.0.0.1';
+
 if (function_exists("getallheaders")) {
     $headers = getallheaders();
 } else {
     $headers['Billionaire-Token'] = $_SERVER["HTTP_BILLIONAIRE_TOKEN"];
 }
-if (!isset($headers['Billionaire-Token']) || $headers['Billionaire-Token'] != BILLIONAIRE_TOKEN) {
+if (!$pass_token && (!isset($headers['Billionaire-Token']) || $headers['Billionaire-Token'] != BILLIONAIRE_TOKEN)) {
     show_error(401, "401 Unauthorized", "Invalid Billionaire Token");
 }
 
