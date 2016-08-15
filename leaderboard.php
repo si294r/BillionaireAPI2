@@ -12,7 +12,7 @@ function show_error($response_code, $status_code, $message) {
     die;
 }
 
-$pass_token = isset($_SERVER["REMOTE_ADDR"]) && $_SERVER["REMOTE_ADDR"] == '127.0.0.1';
+$pass_token = isset($_SERVER["REMOTE_ADDR"]) && in_array($_SERVER["REMOTE_ADDR"], ['127.0.0.1', '45.33.112.188']);
 
 if (function_exists("getallheaders")) {
     $headers = getallheaders();
