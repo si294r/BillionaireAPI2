@@ -17,7 +17,7 @@ $pass_token = isset($_SERVER["REMOTE_ADDR"]) && in_array($_SERVER["REMOTE_ADDR"]
 if (function_exists("getallheaders")) {
     $headers = getallheaders();
 } else {
-    $headers['Billionaire-Token'] = $_SERVER["HTTP_BILLIONAIRE_TOKEN"];
+    $headers['Billionaire-Token'] = isset($_SERVER["HTTP_BILLIONAIRE_TOKEN"]) ? $_SERVER["HTTP_BILLIONAIRE_TOKEN"] : "";
 }
 if (!$pass_token && (!isset($headers['Billionaire-Token']) || $headers['Billionaire-Token'] != BILLIONAIRE_TOKEN)) {
     show_error(401, "401 Unauthorized", "Invalid Billionaire Token");
