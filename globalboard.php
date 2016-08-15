@@ -104,7 +104,7 @@ if ($update_top_player_cache == 1) {
         }
     }
 
-    apcu_store($key, $result['topPlayer'], 240);
+    apcu_store($key, $result['topPlayer'], 0);
 }
 
 $result['status'] = TRUE;
