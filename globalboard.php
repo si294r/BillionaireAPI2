@@ -9,16 +9,16 @@ $facebookID = isset($params[1]) ? $params[1] : "";
 $limit = isset($params[2]) ? $params[2] : 50;
 $overwrite_top_player_cache = isset($params[3]) ? $params[3] : 0;
 
-if (trim($facebookID) == "" && $overwrite_top_player_cache == 0) {
+function is_crontab() {
+    global $overwrite_top_player_cache;
+    return $overwrite_top_player_cache == 1;
+}
+
+if (trim($facebookID) == "" && !is_crontab()) {
     return array(
         "code" => 141,
         "error" => "parameter facebook id not found"
     );
-}
-
-function is_crontab() {
-    global $overwrite_top_player_cache;
-    return $overwrite_top_player_cache == 1;
 }
 
 $db = get_mongodb(IS_DEVELOPMENT);

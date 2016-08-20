@@ -9,7 +9,12 @@ $countryCode = isset($params[2]) ? $params[2] : "";
 $limit = isset($params[3]) ? $params[3] : 50;
 $overwrite_top_player_cache = isset($params[4]) ? $params[4] : 0;
 
-if (trim($facebookID) == "" && $overwrite_top_player_cache == 0) {
+function is_crontab() {
+    global $overwrite_top_player_cache;
+    return $overwrite_top_player_cache == 1;
+}
+
+if (trim($facebookID) == "" && !is_crontab()) {
     return array(
         "code" => 141,
         "error" => "parameter facebook id not found"
@@ -20,8 +25,9 @@ $db = get_mongodb(IS_DEVELOPMENT);
 $collection = $db->selectCollection("_User");
 
 $fields = ['_id', 'facebookID', 'netWorth', 'netWorth_2', 'netWorth_pow', 'displayName'];
+$crontab_countryCode = ['US', 'GB', 'CA', 'AU', 'NL', 'BR', 'IN', 'FR', 'ID', 'SE', 'DE'];
 
-if ($overwrite_top_player_cache == 0) {
+if (!is_crontab()) {
     $document = $collection->findOne([ 'facebookID' => $facebookID]);
 
     if (!is_object($document)) {
@@ -31,11 +37,9 @@ if ($overwrite_top_player_cache == 0) {
     $result['currentUser'] = bson_document_to_array($document, $fields);
 }
 
-$update_top_player_cache = 0;
 $key = "BillionaireAPI/leaderboard.php?localboard/" . $countryCode;
 $array_cache = apcu_fetch($key);
-//if ($array_cache === FALSE || $overwrite_top_player_cache == 1) {
-if ($overwrite_top_player_cache == 1) {
+if (is_crontab() || !in_array($countryCode, $crontab_countryCode)) {
     $filter = array('countryCode' => array('$eq' => $countryCode));
     $sort = array('netWorth_pow' => -1, 'netWorth_2' => -1, 'facebookID' => -1); // desc(-1), asc(1)
     $options = array('sort' => $sort, 'limit' => (int) $limit);
@@ -43,13 +47,12 @@ if ($overwrite_top_player_cache == 1) {
     $documents = $collection->find($filter, $options);
 
     $array_cache = bson_documents_to_array($documents, $fields);
-    $update_top_player_cache = 1;
 } elseif ($array_cache === FALSE) {
     $array_cache = [];
 }
 $result['topPlayer'] = $array_cache;
 
-if ($overwrite_top_player_cache == 0) {
+if (!is_crontab()) {
     $netWorth_pow = isset($document->netWorth_pow) ? $document->netWorth_pow : 0;
     $netWorth_2 = isset($document->netWorth_2) ? $document->netWorth_2 : 0;
     $count1 = $collection->count(array(//'facebookID' => array('$exists' => true), 
@@ -59,28 +62,37 @@ if ($overwrite_top_player_cache == 0) {
         'countryCode' => array('$eq' => $countryCode),
         'netWorth_pow' => array('$eq' => $netWorth_pow),
         'netWorth_2' => array('$gt' => $netWorth_2)));
-    $count3 = $collection->count(array( '$and' =>
-            array(
-                //array('facebookID' => array('$exists' => true)), 
-                array('countryCode' => array('$eq' => $countryCode)),
-                array('netWorth_pow' => array('$eq' => $netWorth_pow)),
-                array('netWorth_2' => array('$eq' => $netWorth_2)),
-                array('facebookID' => array('$gte' => $facebookID))
-                )
-            ));
+    $count3 = $collection->count(array('$and' =>
+        array(
+            //array('facebookID' => array('$exists' => true)), 
+            array('countryCode' => array('$eq' => $countryCode)),
+            array('netWorth_pow' => array('$eq' => $netWorth_pow)),
+            array('netWorth_2' => array('$eq' => $netWorth_2)),
+            array('facebookID' => array('$gte' => $facebookID))
+        )
+    ));
 
     $facebook_ids = array($facebookID);
+    if (!in_array($countryCode, $crontab_countryCode)) {
+        $i = 1;
+        foreach ($result['topPlayer'] as $k => $v) {
+            if (!isset($v['facebookID'])) {
+                $result['topPlayer'][$k]['facebookID'] = "0";
+            } elseif (trim($v['facebookID']) != "") {
+                $facebook_ids[] = $v['facebookID'];
+            }
+            $result['topPlayer'][$k]['rank'] = $i;
+            $i++;
+        }
+    }
 } else {
     $count1 = $count2 = $count3 = 0;
 
     $facebook_ids = array();
-}
-
-if ($update_top_player_cache == 1) {
     $i = 1;
     foreach ($result['topPlayer'] as $k => $v) {
         if (!isset($v['facebookID'])) {
-            $result['topPlayer'][$k]['facebookID'] = "0"; 
+            $result['topPlayer'][$k]['facebookID'] = "0";
         } elseif (trim($v['facebookID']) != "") {
             $facebook_ids[] = $v['facebookID'];
         }
@@ -93,12 +105,12 @@ $url = "https://graph.facebook.com/?ids=" . implode(",", $facebook_ids) . "&acce
 $result_facebook = file_get_contents($url);
 $json_facebook = json_decode($result_facebook);
 
-if ($overwrite_top_player_cache == 0) {
+if (!is_crontab()) {
     $result['currentUser']['name'] = isset($json_facebook->$facebookID->name) ? $json_facebook->$facebookID->name : "N/A";
     $result['currentUser']['rank'] = $count1 + $count2 + $count3;
 }
 
-if ($update_top_player_cache == 1) {
+if (is_crontab() || !in_array($countryCode, $crontab_countryCode)) {
     foreach ($result['topPlayer'] as $k => $v) {
         if (trim($v['facebookID']) != "" && isset($json_facebook->$v['facebookID']->name)) {
             $result['topPlayer'][$k]['name'] = $json_facebook->$v['facebookID']->name;
@@ -107,7 +119,7 @@ if ($update_top_player_cache == 1) {
         }
     }
 
-    apcu_store($key, $result['topPlayer'], 0);
+    if (is_crontab()) apcu_store($key, $result['topPlayer'], 0);
 }
 
 $result['status'] = TRUE;
