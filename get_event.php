@@ -34,12 +34,13 @@ $json['exception'] = "";
 
 try {
 
+    $is_development = $debug == "1";
+    
     $key = "BillionaireAPI/get_event.php?".$query_string;
     $array = apcu_fetch($key);
     if ($array === FALSE) {
         // get mongodb object database
 
-        $is_development = $debug == "1";
         $database = $is_development == true ? $config['database_dev'] : $config['database'];
 
         $connection_string = "mongodb://"
