@@ -211,4 +211,6 @@ $result = curl_exec($http);
 curl_close($http);
 
 $json_result = json_decode($result);
-return $json_result;
+$body_message['status'] = $json_result->status;
+$body_message['affected_row'] = $json_result->affected_row;
+return $body_message;
