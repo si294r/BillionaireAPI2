@@ -193,7 +193,7 @@ $headers = array(
 $body_message['apps_name'] = "billionaire_prod";
 $body_message['device_token'] = $device_token;
 $body_message['message'] = $message;
-        
+echo json_encode($body_message);        
 $http = curl_init();
 
 curl_setopt_array($http, array(
@@ -201,7 +201,7 @@ curl_setopt_array($http, array(
     CURLOPT_PORT => 80,
     CURLOPT_HTTPHEADER => $headers,
     CURLOPT_POST => TRUE,
-    CURLOPT_POSTFIELDS => $body_message,
+    CURLOPT_POSTFIELDS => json_encode($body_message),
     CURLOPT_RETURNTRANSFER => TRUE,
     CURLOPT_TIMEOUT => 30,
     CURLOPT_HEADER => 1
