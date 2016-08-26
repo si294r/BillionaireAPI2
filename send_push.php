@@ -193,7 +193,7 @@ $headers = array(
 $body_message['apps_name'] = "billionaire_prod";
 $body_message['device_token'] = $device_token;
 $body_message['message'] = $message;
-echo json_encode($body_message);        
+//echo json_encode($body_message);        
 $http = curl_init();
 
 curl_setopt_array($http, array(
