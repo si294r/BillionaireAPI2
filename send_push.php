@@ -208,10 +208,12 @@ curl_setopt_array($http, array(
 ));
 
 $result = curl_exec($http);
+$header_size = curl_getinfo($http, CURLINFO_HEADER_SIZE);
+$header = substr($result, 0, $header_size);
+$body = substr($result, $header_size);
 curl_close($http);
-echo  $result;
 
-$json_result = json_decode($result);
+$json_result = json_decode($body);
 $body_message['status'] = $json_result->status;
 $body_message['affected_row'] = $json_result->affected_row;
 return $body_message;
