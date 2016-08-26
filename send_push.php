@@ -209,6 +209,7 @@ curl_setopt_array($http, array(
 
 $result = curl_exec($http);
 curl_close($http);
+echo  $result;
 
 $json_result = json_decode($result);
 $body_message['status'] = $json_result->status;
