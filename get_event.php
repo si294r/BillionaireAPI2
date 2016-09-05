@@ -38,10 +38,10 @@ try {
     
     $key = "BillionaireAPI/get_event.php?".$query_string;
     $array = apcu_fetch($key);
-    if ($array === FALSE) {
+    if ($array === FALSE || $is_development == TRUE) {
         // get mongodb object database
 
-        $database = $is_development == true ? $config['database_dev'] : $config['database'];
+        $database = $is_development == TRUE ? $config['database_dev'] : $config['database'];
 
         $connection_string = "mongodb://"
                 . $config['username'] . ":"
