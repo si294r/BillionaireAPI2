@@ -14,6 +14,10 @@ function is_crontab() {
     return $overwrite_top_player_cache == 1;
 }
 
+function display_name_exists($value) {
+    return isset($value['displayName']) && trim($value['displayName']) != "";
+}
+
 if (trim($facebookID) == "" && !is_crontab()) {
     return array(
         "code" => 141,
@@ -101,6 +105,8 @@ if (is_crontab()) {
     foreach ($result['topPlayer'] as $k => $v) {
         if (trim($v['facebookID']) != "" && isset($json_facebook->$v['facebookID']->name)) {
             $result['topPlayer'][$k]['name'] = $json_facebook->$v['facebookID']->name;
+        } elseif (display_name_exists($v)) {
+            $result['topPlayer'][$k]['name'] = $v['displayName'];
         } else {
             $result['topPlayer'][$k]['name'] = "N/A";
         }

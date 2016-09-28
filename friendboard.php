@@ -28,7 +28,8 @@ if (!is_object($document)) {
 $result['currentUser'] = bson_document_to_array($document, $fields);
 
 $friends = array();
-$filter_friends = array($facebookID);
+//$filter_friends = array($facebookID);
+$filter_friends = array();
 $url = "https://graph.facebook.com/v2.7/$facebookID/friends?access_token={$config['facebook_token']}&limit=50";
 
 get_facebook_friends:
@@ -57,7 +58,9 @@ $url2 = "https://graph.facebook.com/?ids=" . $facebookID . "&access_token=" . $c
 $result_facebook2 = file_get_contents($url2);
 $json_facebook2 = json_decode($result_facebook2);
 
-$friends[$facebookID] = $json_facebook2->$facebookID->name;
+if (isset($friends[$facebookID])) {
+    $friends[$facebookID] = $json_facebook2->$facebookID->name;
+}
 
 $result['currentUser']['name'] = $json_facebook2->$facebookID->name;
 $result['currentUser']['rank'] = 0;
