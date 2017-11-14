@@ -105,9 +105,19 @@ if (!is_crontab()) {
     }
 }
 
-$url = "https://graph.facebook.com/?ids=" . implode(",", $facebook_ids) . "&access_token=" . $config['facebook_token'];
-$result_facebook = file_get_contents($url);
-$json_facebook = json_decode($result_facebook);
+//$url = "https://graph.facebook.com/?ids=" . implode(",", $facebook_ids) . "&access_token=" . $config['facebook_token'];
+//$result_facebook = file_get_contents($url);
+//$json_facebook = json_decode($result_facebook);
+
+$facebook_ids = array_chunk($facebook_ids, 50);
+$arr_json_facebook = [];
+foreach ($facebook_ids as $k=>$v) {
+    $url = "https://graph.facebook.com/?ids=" . implode(",", $facebook_ids[$k]) . "&access_token=" . $config['facebook_token'];
+    $result_facebook = file_get_contents($url);
+    $arr_json_facebook = $arr_json_facebook + json_decode($result_facebook, true);
+}
+$json_facebook = json_decode(json_encode($arr_json_facebook));
+
 
 if (!is_crontab()) {
     $result['currentUser']['name'] = isset($json_facebook->$facebookID->name) ? $json_facebook->$facebookID->name : "N/A";
